@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Monitoring | Industrial IoT Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Leaflet.js for Live GPS Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- 1. TOP NAVIGATION BAR -->
+        <header class="top-navbar">
+            <div class="nav-left">
+                <div class="logo-icon-box">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div class="title-group">
+                    <h1 class="main-title">Smart Monitoring</h1>
+                    <span class="sub-title">Industrial Dashboard</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" id="navHome">
+                    <i class="fa-solid fa-house"></i> HOME
+                </button>
+                <button class="nav-btn" id="navEmployee">
+                    <i class="fa-solid fa-users"></i> EMPLOYEE PRESENT
+                </button>
+                <button class="nav-btn" id="navHistory">
+                    <i class="fa-solid fa-chart-line"></i> HISTORY DATA
+                </button>
+                <button class="nav-btn" id="navNotifications">
+                    <i class="fa-solid fa-bell"></i> NOTIFICATIONS <span class="nav-badge" id="notifNavBadge">0</span>
+                </button>
+            </nav>
+
+            <div class="nav-right">
+                <div class="status-indicator offline">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="headerDeviceStatus">OFFLINE</span>
+                </div>
+                <div class="digital-clock" id="digitalClock">
+                    <span class="clock-time">00:00:00 AM</span>
+                    <span class="clock-date">--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTAINER -->
+        <main class="dashboard-content">
+            <!-- 2. TOP SENSOR SECTION (3 Large Cards) -->
+            <section class="top-sensors-grid">
+                <!-- Temperature Card -->
+                <div class="sensor-card temperature-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="icon-badge temp-badge">
+                                <i class="fa-solid fa-temperature-half"></i>
+                            </div>
+                            <h2 class="card-title">TEMPERATURE</h2>
+                        </div>
+                        <span class="status-pill status-normal" id="tempStatus">NORMAL</span>
+                    </div>
+                    
+                    <div class="gauge-wrapper">
+                        <canvas id="tempGaugeCanvas"></canvas>
+                        <div class="gauge-center-readout">
+                            <div class="readout-value" id="tempValue">0</div>
+                            <div class="readout-unit">°C</div>
+                        </div>
+                    </div>
+
+                    <div class="sensor-meta">
+                        <span class="meta-range">Range: 0°C – 60°C</span>
+                        <span class="meta-target">Set Point: 25.0°C</span>
+                    </div>
+                </div>
+
+                <!-- Humidity Card -->
+                <div class="sensor-card humidity-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="icon-badge humidity-badge">
+                                <i class="fa-solid fa-droplet"></i>
+                            </div>
+                            <h2 class="card-title">HUMIDITY</h2>
+                        </div>
+                        <span class="status-pill status-normal" id="humidityStatus">NORMAL</span>
+                    </div>
+                    
+                    <div class="gauge-wrapper">
+                        <canvas id="humidityGaugeCanvas"></canvas>
+                        <div class="gauge-center-readout">
+                            <div class="readout-value" id="humidityValue">0</div>
+                            <div class="readout-unit">%</div>
+                        </div>
+                    </div>
+
+                    <div class="sensor-meta">
+                        <span class="meta-range">Range: 0% – 100%</span>
+                        <span class="meta-target">Set Point: 50%</span>
+                    </div>
+                </div>
+
+                <!-- Gas Concentration Card -->
+                <div class="sensor-card gas-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <div class="icon-badge gas-badge">
+                                <i class="fa-solid fa-smog"></i>
+                            </div>
+                            <h2 class="card-title">GAS CONCENTRATION</h2>
+                        </div>
+                        <span class="status-pill status-normal" id="gasStatusPill">NORMAL</span>
+                    </div>
+                    
+                    <div class="gauge-wrapper">
+                        <canvas id="gasGaugeCanvas"></canvas>
+                        <div class="gauge-center-readout">
+                            <div class="readout-value" id="gasValue">0</div>
+                            <div class="readout-unit">ppm</div>
+                        </div>
+                    </div>
+
+                    <div class="sensor-meta">
+                        <span class="meta-range">Range: 0 – 4100 ppm</span>
+                        <span class="meta-target">Threshold: &lt; 2500 ppm</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. STATUS CARDS SECTION (4 Columns) -->
+            <section class="status-cards-grid">
+                <!-- FLAME CARD -->
+                <div class="status-card" id="cardFlame">
+                    <div class="card-icon-box normal-icon">
+                        <i class="fa-solid fa-fire-flame-curved"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">FLAME</h3>
+                        <div class="status-indicator-bar">
+                            <span class="indicator-dot green-dot" id="flameDot"></span>
+                            <span class="indicator-text text-normal" id="flameStatus">NORMAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GAS STATUS CARD -->
+                <div class="status-card" id="cardGasStatus">
+                    <div class="card-icon-box normal-icon">
+                        <i class="fa-solid fa-biohazard"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">GAS STATUS</h3>
+                        <div class="status-indicator-bar">
+                            <span class="indicator-dot green-dot" id="gasStatusDot"></span>
+                            <span class="indicator-text text-normal" id="gasStatusText">NORMAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOTION CARD -->
+                <div class="status-card" id="cardMotion">
+                    <div class="card-icon-box normal-icon">
+                        <i class="fa-solid fa-person-walking-with-cane"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">MOTION</h3>
+                        <div class="status-indicator-bar">
+                            <span class="indicator-dot green-dot" id="motionDot"></span>
+                            <span class="indicator-text text-normal" id="motionStatus">NORMAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIBRATION CARD -->
+                <div class="status-card" id="cardVibration">
+                    <div class="card-icon-box normal-icon">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3 class="status-title">VIBRATION</h3>
+                        <div class="status-indicator-bar">
+                            <span class="indicator-dot green-dot" id="vibrationDot"></span>
+                            <span class="indicator-text text-normal" id="vibrationStatus">NORMAL</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. STATUS MONITORING SECTION (4 Columns - Read Only) -->
+            <section class="controls-grid">
+                <!-- COOLING FAN -->
+                <div class="control-card inactive-control" id="controlCoolingFan">
+                    <div class="control-header">
+                        <div class="control-icon" id="coolingFanIconBox">
+                            <i class="fa-solid fa-fan" id="coolingFanIcon"></i>
+                        </div>
+                        <h3 class="control-title">COOLING FAN</h3>
+                    </div>
+                    <div class="control-action">
+                        <div class="status-display-pill status-pill-off" id="statusCoolingFan">
+                            <span class="pill-dot"></span>
+                            <span class="pill-label" id="labelCoolingFan">FAN OFF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXHAUST FAN -->
+                <div class="control-card inactive-control" id="controlExhaustFan">
+                    <div class="control-header">
+                        <div class="control-icon" id="exhaustFanIconBox">
+                            <i class="fa-solid fa-wind" id="exhaustFanIcon"></i>
+                        </div>
+                        <h3 class="control-title">EXHAUST FAN</h3>
+                    </div>
+                    <div class="control-action">
+                        <div class="status-display-pill status-pill-off" id="statusExhaustFan">
+                            <span class="pill-dot"></span>
+                            <span class="pill-label" id="labelExhaustFan">FAN OFF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN GATE -->
+                <div class="control-card inactive-control" id="controlMainGate">
+                    <div class="control-header">
+                        <div class="control-icon gate-closed-icon" id="mainGateIconBox">
+                            <i class="fa-solid fa-door-closed" id="mainGateIcon"></i>
+                        </div>
+                        <h3 class="control-title">MAIN GATE</h3>
+                    </div>
+                    <div class="control-action">
+                        <div class="status-display-pill status-pill-closed" id="statusMainGate">
+                            <span class="pill-dot"></span>
+                            <span class="pill-label" id="labelMainGate">CLOSED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMERGENCY GATE -->
+                <div class="control-card inactive-control" id="controlEmergencyGate">
+                    <div class="control-header">
+                        <div class="control-icon gate-closed-icon" id="emergencyGateIconBox">
+                            <i class="fa-solid fa-triangle-exclamation" id="emergencyGateIcon"></i>
+                        </div>
+                        <h3 class="control-title">EMERGENCY GATE</h3>
+                    </div>
+                    <div class="control-action">
+                        <div class="status-display-pill status-pill-closed" id="statusEmergencyGate">
+                            <span class="pill-dot"></span>
+                            <span class="pill-label" id="labelEmergencyGate">CLOSED</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. LIVE GPS LOCATION SECTION (Leaflet Map Integration) -->
+            <section class="gps-section">
+                <div class="gps-header">
+                    <div class="gps-header-left">
+                        <i class="fa-solid fa-location-crosshairs gps-header-icon"></i>
+                        <h2 class="gps-title">GPS LOCATION</h2>
+                    </div>
+                    <div class="gps-header-right">
+                        <span class="gps-badge gps-badge-waiting" id="gpsStatusBadge">
+                            <span class="gps-badge-dot"></span>
+                            <span id="gpsStatusText">GPS WAITING</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Compact Live Map Area -->
+                <div class="gps-map-container">
+                    <div id="leafletGpsMap" class="leaflet-dark-map"></div>
+                </div>
+
+                <!-- Compact GPS Telemetry Overlay Bar -->
+                <div class="gps-telemetry-bar">
+                    <div class="gps-tel-item">
+                        <span class="gps-tel-label">LATITUDE:</span>
+                        <span class="gps-tel-val" id="gpsLatVal">--</span>
+                    </div>
+                    <div class="gps-tel-item">
+                        <span class="gps-tel-label">LONGITUDE:</span>
+                        <span class="gps-tel-val" id="gpsLonVal">--</span>
+                    </div>
+                    <div class="gps-tel-item">
+                        <span class="gps-tel-label">ALTITUDE:</span>
+                        <span class="gps-tel-val" id="gpsAltVal">-- m</span>
+                    </div>
+                    <div class="gps-tel-item">
+                        <span class="gps-tel-label">SPEED:</span>
+                        <span class="gps-tel-val" id="gpsSpeedVal">-- km/h</span>
+                    </div>
+                    <div class="gps-tel-item">
+                        <span class="gps-tel-label">SATELLITES:</span>
+                        <span class="gps-tel-val" id="gpsSatVal">--</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS FOR HEADER NAV BUTTONS -->
+
+    <!-- EMPLOYEE PRESENT SECTION (Properly Scoped Namespace) -->
+    <div class="modal-backdrop" id="employeeModal">
+        <div class="modal-box modal-xl employee-present-section">
+            <div class="modal-header employee-present-header">
+                <div class="modal-title-group">
+                    <h3><i class="fa-solid fa-users-viewfinder"></i> EMPLOYEE ATTENDANCE & SAFETY STATUS</h3>
+                    <div class="safety-status-badge">
+                        <span class="safety-beacon-dot"></span>
+                        <span class="safety-beacon-text">SAFETY STATUS: <strong>SYSTEM NORMAL</strong></span>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeEmployeeModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Summary Metrics Bar -->
+                <div class="employee-present-stats-bar">
+                    <div class="employee-present-stat"><span class="mstat-num" id="statPresentCount">0</span><span class="mstat-lbl">Currently Present</span></div>
+                    <div class="employee-present-stat"><span class="mstat-num text-green" id="statCompletedCount">0</span><span class="mstat-lbl">Completed Shift</span></div>
+                    <div class="employee-present-stat"><span class="mstat-num text-blue" id="statTotalScans">0</span><span class="mstat-lbl">Total Logged Today</span></div>
+                </div>
+
+                <!-- Simulation / Integration Scan Test Trigger Bar -->
+                <div class="employee-present-scan-bar">
+                    <div class="scan-bar-title"><i class="fa-solid fa-id-card-clip"></i> RFID / Scan Module Test:</div>
+                    <input type="text" id="scanEmpId" placeholder="EMP ID (e.g. EMP001)" class="industrial-input input-sm">
+                    <input type="text" id="scanEmpName" placeholder="Name (e.g. Alex Rivera)" class="industrial-input input-sm">
+                    <input type="text" id="scanEmpRole" placeholder="Role (e.g. Operator)" class="industrial-input input-sm">
+                    <button class="scan-btn" id="btnSimulateScan"><i class="fa-solid fa-expand"></i> Record Scan</button>
+                </div>
+
+                <!-- Scoped Responsive Table Container -->
+                <div class="employee-present-table-wrapper">
+                    <table class="employee-present-table">
+                        <thead>
+                            <tr>
+                                <th>EMP ID</th>
+                                <th>NAME</th>
+                                <th>ROLE</th>
+                                <th>IN TIME</th>
+                                <th>OUT TIME</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Populated dynamically via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY DATA SECTION (Properly Scoped Namespace) -->
+    <div class="modal-backdrop" id="historyModal">
+        <div class="modal-box modal-lg history-data-section">
+            <div class="modal-header history-data-header">
+                <h3><i class="fa-solid fa-chart-line"></i> Historical Telemetry Trends</h3>
+                <button class="modal-close" id="closeHistoryModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="history-data-filter-bar">
+                    <button class="history-data-filter-btn active">Last 24 Hours</button>
+                    <button class="history-data-filter-btn">7 Days</button>
+                    <button class="history-data-filter-btn">30 Days</button>
+                    <button class="history-data-export-btn" id="btnExportCSV"><i class="fa-solid fa-download"></i> Export CSV Log</button>
+                </div>
+                <div class="history-data-chart-wrapper">
+                    <canvas id="historyTrendCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REAL-TIME NOTIFICATIONS MONITORING MODAL -->
+    <div class="modal-backdrop" id="notificationModal">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3><i class="fa-solid fa-bell"></i> REAL-TIME IOT NOTIFICATIONS MONITORING</h3>
+                </div>
+                <button class="modal-close" id="closeNotificationModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Header Filters & Actions Bar -->
+                <div class="notif-control-bar">
+                    <div class="notif-filters">
+                        <button class="notif-filter-btn active" data-filter="ALL">ALL</button>
+                        <button class="notif-filter-btn filter-critical" data-filter="CRITICAL">CRITICAL</button>
+                        <button class="notif-filter-btn filter-warning" data-filter="WARNING">WARNING</button>
+                        <button class="notif-filter-btn filter-info" data-filter="INFO">INFO</button>
+                        <button class="notif-filter-btn filter-success" data-filter="SUCCESS">SUCCESS</button>
+                    </div>
+                    <div class="notif-actions">
+                        <button class="notif-action-btn" id="btnMarkAllRead"><i class="fa-solid fa-check-double"></i> Mark All Read</button>
+                        <button class="notif-action-btn action-clear" id="btnClearNotifHistory"><i class="fa-solid fa-trash-can"></i> Clear History</button>
+                    </div>
+                </div>
+
+                <!-- Simulation Event Dispatch Test Bar -->
+                <div class="notif-test-bar">
+                    <span class="test-bar-label"><i class="fa-solid fa-bolt"></i> Test Event Trigger:</span>
+                    <button class="test-event-btn btn-ev-flame" id="testEvFlame"><i class="fa-solid fa-fire"></i> Flame Alert</button>
+                    <button class="test-event-btn btn-ev-gas" id="testEvGas"><i class="fa-solid fa-smog"></i> Gas Warning</button>
+                    <button class="test-event-btn btn-ev-gate" id="testEvGate"><i class="fa-solid fa-door-open"></i> Gate Open</button>
+                    <button class="test-event-btn btn-ev-normal" id="testEvNormal"><i class="fa-solid fa-circle-check"></i> Reset Normal</button>
+                </div>
+
+                <!-- Notifications List Container -->
+                <div class="notif-list-wrapper" id="notificationList">
+                    <!-- Notification items rendered dynamically via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
