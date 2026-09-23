@@ -419,7 +419,7 @@ function setupNotificationHandlers() {
 /* -------------------------------------------------------------
  * 1. NODE-RED WEBSOCKET LIVE DATA INTEGRATION
  * ------------------------------------------------------------- */
-const NODE_RED_WS_URL = "ws://headed-spooky-snowstorm.ngrok-free.dev/ws/dashboard";
+const NODE_RED_WS_URL = "wss://headed-spooky-snowstorm.ngrok-free.dev/ws/dashboard";
 let socket = null;
 let reconnectTimer = null;
 
