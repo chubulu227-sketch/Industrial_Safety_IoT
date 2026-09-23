@@ -1440,27 +1440,841 @@ body {
 .severity-success .notif-icon-box { background: rgba(34, 211, 167, 0.15); color: var(--green); border: 1px solid rgba(34, 211, 167, 0.3); }
 .severity-success .severity-pill { background: rgba(34, 211, 167, 0.2); color: var(--green); border: 1px solid rgba(34, 211, 167, 0.4); }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 1024px) {
-    .top-sensors-grid { grid-template-columns: repeat(3, 1fr); }
-    .status-cards-grid { grid-template-columns: repeat(2, 1fr); }
-    .controls-grid { grid-template-columns: repeat(2, 1fr); }
-    .gps-telemetry-bar { flex-wrap: wrap; gap: 8px; }
+/* =============================================================
+ * RESPONSIVE DESIGN & MULTI-DEVICE OPTIMIZATION
+ * Targets: Desktop (1920px, 1440px, 1280px), Laptop (1024px),
+ * Tablet (768px), Mobile (600px, 480px, 375px, 320px)
+ * ============================================================= */
+
+/* Global Responsive Safeguards */
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
+.app-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+canvas {
+    max-width: 100% !important;
+}
+
+.sensor-card,
+.status-card,
+.control-card,
+.gps-section,
+.modal-box,
+.gauge-wrapper,
+.card-header,
+.status-info,
+.control-header {
+    min-width: 0;
+}
+
+/* 1. LAPTOPS & DESKTOPS (<= 1200px) */
+@media (max-width: 1200px) {
+    .app-wrapper {
+        padding: 16px 20px 28px 20px;
+        gap: 18px;
+    }
+    .top-sensors-grid,
+    .status-cards-grid,
+    .controls-grid {
+        gap: 16px;
+    }
+    .nav-btn {
+        padding: 9px 14px;
+        font-size: 11.5px;
+    }
+}
+
+/* 2. LAPTOPS & TABLET LANDSCAPE (<= 1024px) */
+@media (max-width: 1024px) {
+    .app-wrapper {
+        padding: 14px 16px 24px 16px;
+        gap: 16px;
+    }
+    .top-navbar {
+        padding: 10px 18px;
+    }
+    .logo-icon-box {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    .main-title {
+        font-size: 16px;
+    }
+    .sub-title {
+        font-size: 10px;
+    }
+    .nav-menu {
+        gap: 6px;
+    }
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+        gap: 6px;
+    }
+    .clock-time {
+        font-size: 13px;
+    }
+    .clock-date {
+        font-size: 9.5px;
+    }
+    .top-sensors-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+    .sensor-card {
+        padding: 16px 14px;
+    }
+    .readout-value {
+        font-size: 30px;
+    }
+    .status-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+    .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+    .gps-section {
+        padding: 18px;
+    }
+    .gps-telemetry-bar {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+    }
+    .modal-box {
+        width: 92%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .modal-xl {
+        max-width: 900px;
+    }
+    .modal-lg {
+        max-width: 750px;
+    }
+}
+
+/* 3. TABLETS PORTRAIT (<= 768px) */
 @media (max-width: 768px) {
+    .app-wrapper {
+        padding: 12px 14px 24px 14px;
+        gap: 16px;
+    }
     .top-navbar {
         flex-direction: column;
-        gap: 14px;
+        gap: 12px;
         align-items: stretch;
+        padding: 14px 16px;
+        border-radius: 14px;
     }
-    .nav-menu { justify-content: center; }
-    .nav-right { justify-content: space-between; }
-    .top-sensors-grid { grid-template-columns: 1fr; }
-    .status-cards-grid { grid-template-columns: 1fr; }
-    .controls-grid { grid-template-columns: 1fr; }
-    .employee-present-scan-bar { flex-direction: column; align-items: stretch; }
-    .input-sm { max-width: 100%; }
-    .notif-control-bar { flex-direction: column; align-items: stretch; }
-    .notif-filters { flex-wrap: wrap; }
+    .nav-left {
+        justify-content: space-between;
+        width: 100%;
+    }
+    .nav-menu {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+    .nav-btn {
+        justify-content: center;
+        text-align: center;
+        padding: 9px 12px;
+        font-size: 11px;
+        width: 100%;
+    }
+    .nav-right {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .top-sensors-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .sensor-card {
+        padding: 18px 16px;
+        border-radius: 16px;
+    }
+    .gauge-wrapper {
+        height: 165px;
+    }
+    .gauge-wrapper canvas {
+        max-height: 155px;
+    }
+    .readout-value {
+        font-size: 32px;
+    }
+    .status-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .status-card {
+        padding: 14px 16px;
+    }
+    .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .control-card {
+        padding: 16px 14px;
+    }
+    .gps-section {
+        padding: 16px 14px;
+        border-radius: 16px;
+        gap: 12px;
+    }
+    .gps-map-container {
+        height: 200px;
+        border-radius: 12px;
+    }
+    .gps-telemetry-bar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 12px;
+        padding: 10px 14px;
+    }
+    .gps-tel-item:last-child {
+        grid-column: span 2;
+    }
+    .modal-box {
+        width: 95%;
+        max-width: 95%;
+        padding: 18px 16px;
+        max-height: 88vh;
+    }
+    .modal-header {
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+    }
+    .modal-title-group h3 {
+        font-size: 15px;
+    }
+    .employee-present-stats-bar {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .employee-present-stat {
+        padding: 8px 12px;
+    }
+    .mstat-num {
+        font-size: 18px;
+    }
+    .employee-present-scan-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+    .input-sm {
+        max-width: 100%;
+        width: 100%;
+    }
+    .scan-btn {
+        width: 100%;
+        text-align: center;
+    }
+    .employee-present-table-wrapper {
+        max-height: 380px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .employee-present-table {
+        min-width: 520px;
+    }
+    .history-data-filter-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .history-data-export-btn {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+    .history-data-chart-wrapper {
+        height: 280px;
+    }
+    .notif-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .notif-filters {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .notif-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .notif-action-btn {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+    }
+    .notif-test-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .test-event-btn {
+        flex: 1 1 calc(50% - 6px);
+        text-align: center;
+    }
+}
+
+/* 4. LARGE MOBILE PHONES / PHABLETS (<= 600px) */
+@media (max-width: 600px) {
+    .app-wrapper {
+        padding: 10px 12px 20px 12px;
+        gap: 14px;
+    }
+    .top-navbar {
+        padding: 12px 14px;
+        border-radius: 14px;
+    }
+    .logo-icon-box {
+        width: 38px;
+        height: 38px;
+        font-size: 17px;
+    }
+    .main-title {
+        font-size: 16px;
+    }
+    .sub-title {
+        font-size: 10px;
+    }
+    .nav-menu {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    .nav-btn {
+        padding: 8px 10px;
+        font-size: 10.5px;
+        gap: 6px;
+    }
+    .status-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .controls-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .employee-present-stats-bar {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .employee-present-stat {
+        padding: 8px 12px;
+    }
+    .mstat-num {
+        font-size: 18px;
+    }
+    .gauge-wrapper {
+        height: 155px;
+    }
+    .gauge-wrapper canvas {
+        max-height: 145px;
+    }
+    .readout-value {
+        font-size: 28px;
+    }
+    .history-data-chart-wrapper {
+        height: 250px;
+    }
+    .notif-list-wrapper {
+        max-height: 340px;
+    }
+}
+
+/* 5. STANDARD MOBILE PHONES (<= 480px) */
+@media (max-width: 480px) {
+    .app-wrapper {
+        padding: 8px 10px 18px 10px;
+        gap: 12px;
+    }
+    .top-navbar {
+        padding: 10px 12px;
+        border-radius: 12px;
+        gap: 10px;
+    }
+    .logo-icon-box {
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+        border-radius: 8px;
+    }
+    .main-title {
+        font-size: 15px;
+    }
+    .sub-title {
+        font-size: 9px;
+        letter-spacing: 0.8px;
+    }
+    .nav-menu {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    .nav-btn {
+        padding: 8px 6px;
+        font-size: 10px;
+        gap: 5px;
+        border-radius: 8px;
+    }
+    .nav-btn i {
+        font-size: 11px;
+    }
+    .nav-badge {
+        font-size: 9px;
+        padding: 1px 5px;
+    }
+    .status-indicator {
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 14px;
+    }
+    .status-dot {
+        width: 7px;
+        height: 7px;
+    }
+    .clock-time {
+        font-size: 12px;
+    }
+    .clock-date {
+        font-size: 9px;
+    }
+    .sensor-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+    }
+    .card-header {
+        margin-bottom: 8px;
+    }
+    .card-title {
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+    .icon-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+    .status-pill {
+        font-size: 9.5px;
+        padding: 3px 8px;
+    }
+    .gauge-wrapper {
+        height: 145px;
+        margin: 4px 0;
+    }
+    .gauge-wrapper canvas {
+        max-height: 135px;
+    }
+    .readout-value {
+        font-size: 26px;
+    }
+    .readout-unit {
+        font-size: 11px;
+    }
+    .sensor-meta {
+        font-size: 10px;
+        padding-top: 8px;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    .status-card {
+        padding: 12px 14px;
+        gap: 12px;
+        border-radius: 12px;
+    }
+    .card-icon-box {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+    .status-title {
+        font-size: 11px;
+    }
+    .indicator-text {
+        font-size: 12px;
+    }
+    .control-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+        gap: 10px;
+    }
+    .control-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+    .control-title {
+        font-size: 11px;
+    }
+    .status-display-pill {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    .gps-section {
+        padding: 14px 12px;
+        border-radius: 14px;
+        gap: 10px;
+    }
+    .gps-title {
+        font-size: 13px;
+    }
+    .gps-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    .gps-map-container {
+        height: 175px;
+        border-radius: 10px;
+    }
+    .gps-telemetry-bar {
+        padding: 8px 10px;
+        font-size: 10px;
+        gap: 6px 10px;
+    }
+    .modal-box {
+        width: 96%;
+        padding: 14px 12px;
+        border-radius: 14px;
+    }
+    .modal-header {
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+    }
+    .modal-title-group h3 {
+        font-size: 13px;
+        gap: 6px;
+    }
+    .safety-status-badge {
+        font-size: 9.5px;
+        padding: 3px 8px;
+    }
+    .employee-present-table {
+        min-width: 480px;
+        font-size: 12px;
+    }
+    .employee-present-table th {
+        padding: 9px 10px;
+        font-size: 10px;
+    }
+    .employee-present-table td {
+        padding: 10px 10px;
+        font-size: 11px;
+    }
+    .employee-present-time-in,
+    .employee-present-time-out {
+        font-size: 11px;
+        padding: 2px 7px;
+    }
+    .history-data-filter-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    .history-data-export-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    .history-data-chart-wrapper {
+        height: 220px;
+    }
+    .notif-filter-btn {
+        font-size: 9.5px;
+        padding: 4px 8px;
+    }
+    .notif-action-btn {
+        font-size: 10px;
+        padding: 5px 8px;
+    }
+    .test-event-btn {
+        font-size: 9px;
+        padding: 4px 6px;
+    }
+    .notif-item {
+        padding: 10px;
+        gap: 10px;
+    }
+    .notif-icon-box {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    .notif-item-title {
+        font-size: 12px;
+    }
+    .notif-item-msg {
+        font-size: 11px;
+    }
+    #liveEmergencyOverlay {
+        top: 8px !important;
+        width: calc(100% - 16px) !important;
+        max-width: 100% !important;
+        padding: 12px 14px !important;
+        border-radius: 12px !important;
+    }
+    .emergency-condition-pill {
+        font-size: 11px !important;
+        padding: 6px 8px !important;
+    }
+}
+
+/* 6. COMPACT PHONES (<= 375px) */
+@media (max-width: 375px) {
+    .app-wrapper {
+        padding: 6px 8px 16px 8px;
+        gap: 10px;
+    }
+    .top-navbar {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+    .main-title {
+        font-size: 14px;
+    }
+    .sub-title {
+        font-size: 8.5px;
+    }
+    .nav-btn {
+        padding: 7px 5px;
+        font-size: 9.5px;
+        gap: 4px;
+    }
+    .nav-btn i {
+        font-size: 10px;
+    }
+    .status-text {
+        font-size: 10px;
+    }
+    .clock-time {
+        font-size: 11px;
+    }
+    .clock-date {
+        font-size: 8.5px;
+    }
+    .sensor-card {
+        padding: 12px 10px;
+    }
+    .gauge-wrapper {
+        height: 135px;
+    }
+    .gauge-wrapper canvas {
+        max-height: 125px;
+    }
+    .readout-value {
+        font-size: 24px;
+    }
+    .sensor-meta {
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        text-align: center;
+    }
+    .gps-telemetry-bar {
+        grid-template-columns: 1fr;
+        gap: 5px;
+        padding: 8px;
+    }
+    .gps-tel-item {
+        justify-content: space-between;
+        width: 100%;
+        font-size: 9.5px;
+    }
+    .gps-tel-item:last-child {
+        grid-column: span 1;
+    }
+    .notif-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+/* 7. SMALL MOBILE VIEWPORTS (<= 320px) */
+@media (max-width: 320px) {
+    .app-wrapper {
+        padding: 6px 6px 14px 6px;
+        gap: 8px;
+        width: 100%;
+        max-width: 100%;
+    }
+    .top-navbar {
+        padding: 8px 6px;
+        gap: 6px;
+        border-radius: 10px;
+    }
+    .logo-icon-box {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+    .main-title {
+        font-size: 13px;
+    }
+    .sub-title {
+        font-size: 8px;
+    }
+    .nav-menu {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+    }
+    .nav-btn {
+        padding: 6px 4px;
+        font-size: 8.5px;
+        gap: 3px;
+        border-radius: 6px;
+    }
+    .nav-btn i {
+        font-size: 9px;
+    }
+    .nav-badge {
+        font-size: 8px;
+        padding: 1px 3px;
+    }
+    .status-indicator {
+        padding: 3px 6px;
+        font-size: 9.5px;
+        border-radius: 12px;
+    }
+    .clock-time {
+        font-size: 10.5px;
+    }
+    .clock-date {
+        font-size: 8px;
+    }
+    .sensor-card {
+        padding: 10px 8px;
+        border-radius: 12px;
+    }
+    .header-left {
+        gap: 6px;
+    }
+    .card-title {
+        font-size: 10.5px;
+    }
+    .icon-badge {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+        border-radius: 6px;
+    }
+    .status-pill {
+        font-size: 8px;
+        padding: 2px 5px;
+    }
+    .gauge-wrapper {
+        height: 120px;
+    }
+    .gauge-wrapper canvas {
+        max-height: 110px;
+    }
+    .readout-value {
+        font-size: 21px;
+    }
+    .readout-unit {
+        font-size: 9.5px;
+    }
+    .status-card {
+        padding: 10px 8px;
+        gap: 8px;
+        border-radius: 10px;
+    }
+    .card-icon-box {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+        border-radius: 6px;
+    }
+    .status-title {
+        font-size: 10px;
+    }
+    .indicator-text {
+        font-size: 10.5px;
+    }
+    .control-card {
+        padding: 10px 8px;
+        gap: 6px;
+        border-radius: 10px;
+    }
+    .control-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+    .control-title {
+        font-size: 10px;
+    }
+    .status-display-pill {
+        padding: 4px 6px;
+        font-size: 9.5px;
+    }
+    .gps-section {
+        padding: 10px 8px;
+        border-radius: 10px;
+        gap: 8px;
+    }
+    .gps-map-container {
+        height: 145px;
+        border-radius: 8px;
+    }
+    .gps-telemetry-bar {
+        padding: 6px 6px;
+        font-size: 9px;
+    }
+    .modal-box {
+        width: 98%;
+        padding: 10px 6px;
+        border-radius: 10px;
+    }
+    .modal-header h3 {
+        font-size: 11.5px;
+    }
+    .safety-status-badge {
+        font-size: 8px;
+        padding: 2px 5px;
+    }
+    .employee-present-table {
+        min-width: 420px;
+    }
+    .employee-present-table th {
+        padding: 7px 5px;
+        font-size: 8.5px;
+    }
+    .employee-present-table td {
+        padding: 7px 5px;
+        font-size: 9.5px;
+    }
+    .history-data-chart-wrapper {
+        height: 190px;
+    }
+    #liveEmergencyOverlay {
+        top: 6px !important;
+        width: calc(100% - 10px) !important;
+        padding: 8px 8px !important;
+        border-radius: 10px !important;
+    }
+    .emergency-condition-pill {
+        font-size: 9.5px !important;
+        padding: 4px 6px !important;
+    }
 }
